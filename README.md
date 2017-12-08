@@ -1,4 +1,4 @@
-# LS Media Store
+# lsmediastore
 
 > A Vue.js project
 
