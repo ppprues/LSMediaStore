@@ -1,7 +1,7 @@
 <template>
   <v-app id="inspire">
     <v-navigation-drawer
-      persistent
+      fixed
       clipped
       app
       v-model="drawer"
@@ -69,7 +69,7 @@
       clipped-left
       fixed
     >
-      <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
+      <v-toolbar-title :style="$vuetify.breakpoint.smAndUp ? 'width: 300px; min-width: 250px' : 'min-width: 72px'" class="ml-0 pl-3">
         <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
         <v-avatar size="32px" tile>
           <img
@@ -80,16 +80,19 @@
         </v-avatar>
       </v-toolbar-title>
       <v-text-field
+        light
         solo
         prepend-icon="search"
         placeholder="Search"
+        style="min-width: 128px"
       ></v-text-field>
+      <div class="d-flex align-center" style="margin-left: auto">
       <v-btn icon @click.stop="!login">
         <v-icon>account_circle</v-icon>
       </v-btn>
+      </div>
     </v-toolbar>
     <main>
-
     </main>
   </v-app>
 </template>
