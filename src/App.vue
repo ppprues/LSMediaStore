@@ -34,7 +34,7 @@
           <v-card>
             <v-card-title class="headline">Login</v-card-title>
             <v-card-text>
-              <form>
+              <v-form>
                 <v-text-field label="Email" v-model="email" :error-messages="emailErrors" @input="$v.email.$touch()" @blur="$v.email.$touch()"
                   required></v-text-field>
                 <v-text-field label="Password" hint="At least 8 characters" v-model="password" min="8" :error-messages="passwordErrors" :append-icon="e1 ? 'visibility' : 'visibility_off'"
@@ -47,7 +47,7 @@
                   <v-spacer></v-spacer>
                   <v-btn flat @click="submit">Login</v-btn>
                 </v-card-actions>
-              </form>
+              </v-form>
             </v-card-text>
           </v-card>
         </v-dialog>
@@ -65,22 +65,22 @@
   export default {
     data: () => ({
       e1: true,
-      password: "",
+      password: '',
       methods: {
-        addressCheck() {
+        addressCheck () {
           this.errorMessages = this.address && !this.name
             ? ['Hey! I\'m required']
             : []
           return true
         },
-        resetForm() {
+        resetForm () {
           this.errorMessages = []
           this.formHasErrors = false
           Object.keys(this.form).forEach(f => {
             this.$refs[f].reset()
           })
         },
-        submit() {
+        submit () {
           this.formHasErrors = false
           Object.keys(this.form).forEach(f => {
             if (!this.form[f]) this.formHasErrors = true
