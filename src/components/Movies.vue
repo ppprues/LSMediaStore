@@ -22,10 +22,10 @@
 
 <script>
 export default {
-  name: 'Music',
+  name: 'Movies',
   data () {
     return {
-      msg: 'Music | LS Media Store'
+      msg: 'Movies | LS Media Store'
     }
   }
 }

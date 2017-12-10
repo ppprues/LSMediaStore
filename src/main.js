@@ -14,7 +14,6 @@ Vue.use(Vuetify)
 Vue.config.productionTip = false
 
 // Initialize Firebase
-// TODO: Replace with your project's customized code snippet
 var config = {
   apiKey: 'AIzaSyCOvFBb92U9s0uTpRESQfzn2H0f8wSvuNg',
   authDomain: 'ls-media-store.firebaseapp.com',
