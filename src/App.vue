@@ -92,8 +92,7 @@
       drawer: false,
       items: [
         { icon: 'music_note', text: 'Music', url: './Music' },
-        { icon: 'movie', text: 'Movies', url: './Movies' },
-        { icon: 'settings', text: 'Settings', url: './' }
+        { icon: 'movie', text: 'Movies', url: './Movies' }
       ]
     })
   }
