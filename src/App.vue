@@ -35,9 +35,9 @@
             <v-card-title class="headline">Account</v-card-title>
             <v-card-text>
               <v-form>
-                <v-text-title>
+                <v-text>
                   {{name}}
-                </v-text-title>
+                </v-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn flat style="color: RED" @click="signOut">Logout</v-btn>
@@ -77,27 +77,36 @@
 </template>
 
 <script>
-import firebase from "firebase";
+import { db, auth, storage } from "./main";
 
 export default {
-  data: () => ({
-    e1: true,
-    name: "sss",
-    email: "",
-    password: "",
-    login: false,
-    drawer: false,
-    items: [
-      { icon: "music_note", text: "Music", url: "./Music" },
-      { icon: "movie", text: "Movies", url: "./Movies" }
-    ]
-  }),
+  data() {
+    return {
+      e1: true,
+      name: "",
+      email: "",
+      password: "",
+      login: false,
+      drawer: false,
+      items: [
+        { icon: "music_note", text: "Music", url: "./Music" },
+        { icon: "movie", text: "Movies", url: "./Movies" }
+      ]
+    };
+  },
+  updated() {
+    var vm = this;
+    db.ref()
+      .child("customer")
+      .child(this.user)
+      .on("value", snapshot => {
+        var snap = snapshot.val();
+        console.log(snap);
+        (vm.name = snap.name)
+      });
+  },
   computed: {
     user() {
-      firebase.once(this.user, function(snapshot){
-        this.name = snapshot.val();
-      })
-      //var customer = this.$store.getters.user.find((name) => this.$store.getters.user == this.user)
       return this.$store.getters.user;
     }
   },
