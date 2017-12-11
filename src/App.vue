@@ -31,7 +31,21 @@
           <v-icon>account_circle</v-icon>
         </v-btn>
         <v-dialog v-model="login" max-width="290">
-          <v-card>
+          <v-card v-if="user !== null">
+            <v-card-title class="headline">Account</v-card-title>
+            <v-card-text>
+              <v-form>
+                <v-text-title>
+                  {{name}}
+                </v-text-title>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn flat style="color: RED" @click="signOut">Logout</v-btn>
+                </v-card-actions>
+              </v-form>
+            </v-card-text>
+          </v-card>
+          <v-card v-else>
             <v-card-title class="headline">Login</v-card-title>
             <v-card-text>
               <v-form>
@@ -42,14 +56,15 @@
                   @blur="$v.password.$touch()" required></v-text-field>
                 <v-card-actions>
                   <router-link to="Register" @click.native.stop="login = false" >
-                    <v-btn flat @click="">Register</v-btn>
+                    <v-btn flat>Register</v-btn>
                   </router-link>
                   <v-spacer></v-spacer>
-                  <v-btn flat @click="submit">Login</v-btn>
+                  <v-btn flat @click="signIn">Login</v-btn>
                 </v-card-actions>
               </v-form>
             </v-card-text>
           </v-card>
+
         </v-dialog>
       </div>
     </v-toolbar>
@@ -62,38 +77,56 @@
 </template>
 
 <script>
-  export default {
-    data: () => ({
-      e1: true,
-      password: '',
-      methods: {
-        addressCheck () {
-          this.errorMessages = this.address && !this.name
-            ? ['Hey! I\'m required']
-            : []
-          return true
-        },
-        resetForm () {
-          this.errorMessages = []
-          this.formHasErrors = false
-          Object.keys(this.form).forEach(f => {
-            this.$refs[f].reset()
+import firebase from "firebase";
+
+export default {
+  data: () => ({
+    e1: true,
+    name: "sss",
+    email: "",
+    password: "",
+    login: false,
+    drawer: false,
+    items: [
+      { icon: "music_note", text: "Music", url: "./Music" },
+      { icon: "movie", text: "Movies", url: "./Movies" }
+    ]
+  }),
+  computed: {
+    user() {
+      firebase.once(this.user, function(snapshot){
+        this.name = snapshot.val();
+      })
+      //var customer = this.$store.getters.user.find((name) => this.$store.getters.user == this.user)
+      return this.$store.getters.user;
+    }
+  },
+  methods: {
+    signIn() {
+      var vm = this;
+      if (this.user === null) {
+        this.$store
+          .dispatch("signIn", { email: this.email, password: this.password })
+          .then(() => {
+            alert("Successfully sign in");
           })
-        },
-        submit () {
-          this.formHasErrors = false
-          Object.keys(this.form).forEach(f => {
-            if (!this.form[f]) this.formHasErrors = true
-            this.$refs[f].validate(true)
-          })
-        }
-      },
-      login: false,
-      drawer: false,
-      items: [
-        { icon: 'music_note', text: 'Music', url: './Music' },
-        { icon: 'movie', text: 'Movies', url: './Movies' }
-      ]
-    })
+          .catch(err => {
+            alert(err);
+          });
+      } else {
+        alert("You already sign in");
+      }
+    },
+    signOut() {
+      this.$store
+        .dispatch("signOut")
+        .then(() => {
+          alert("Signed Out");
+        })
+        .catch(err => {
+          alert(err);
+        });
+    }
   }
+};
 </script>

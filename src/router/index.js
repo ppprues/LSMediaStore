@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Welcome from '@/components/Welcome'
-import Movies from '@/components/Movies'
-import Music from '@/components/Music'
-import Register from '@/components/Register'
+import Welcome from '@/components/Welcome.vue'
+import Movies from '@/components/Movies.vue'
+import Music from '@/components/Music.vue'
+import Register from '@/components/Register.vue'
 
 Vue.use(Router)
 

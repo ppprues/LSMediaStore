@@ -4,7 +4,8 @@ import Vue from 'vue'
 import Vuetify from 'vuetify'
 import App from './App'
 import router from './router'
-import * as firebase from 'firebase'
+import firebase from 'firebase'
+import { store } from '@/store.js'
 
 // index.js or main.js
 import('../node_modules/vuetify/dist/vuetify.min.css') // Ensure you are using css-loader
@@ -28,6 +29,17 @@ firebase.initializeApp(config)
 new Vue({
   el: '#app',
   router,
+  store,
   template: '<App/>',
-  components: { App }
+  components: { App },
+  created() {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        console.log('App login')
+        this.$store.dispatch('autoSign', user)
+      } else {
+        console.log('App logout')
+      }
+    })
+  }
 })
