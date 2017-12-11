@@ -1,7 +1,7 @@
 import Vuex from 'vuex'
 import Vue from 'vue'
 import firebase from 'firebase'
-import { db, auth, storage } from './main'
+import { db, auth, storage } from '@/main'
 
 Vue.use(Vuex)
 

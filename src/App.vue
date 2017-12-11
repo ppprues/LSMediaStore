@@ -2,7 +2,7 @@
   <v-app id="inspire">
     <v-navigation-drawer fixed clipped app v-model="drawer">
       <v-list dense>
-        <template v-for="(item, i) in items">
+        <template v-for="(item, url, i) in items">
           <v-list-tile v-bind:href="item.url">
             <v-list-tile-action>
               <v-icon>{{ item.icon }}</v-icon>
@@ -20,7 +20,7 @@
       <v-toolbar-title :style="$vuetify.breakpoint.smAndUp ? 'width: 300px; min-width: 250px' : 'min-width: 72px'" class="ml-0 pl-3">
         <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
         <v-avatar size="32px" tile>
-          <router-link to="/">
+          <router-link to="/" style="height: 32px">
             <img src="./assets/LS-logo-full.png" alt="LS Media Store" style="width: auto; height: 32px; padding-left: 120px;">
           </router-link>
         </v-avatar>
@@ -77,65 +77,78 @@
 </template>
 
 <script>
-import { db, auth, storage } from "./main";
-
-export default {
-  data() {
-    return {
-      e1: true,
-      name: "",
-      email: "",
-      password: "",
-      login: false,
-      drawer: false,
-      items: [
-        { icon: "music_note", text: "Music", url: "./Music" },
-        { icon: "movie", text: "Movies", url: "./Movies" }
-      ]
-    };
-  },
-  updated() {
-    var vm = this;
-    db.ref()
-      .child("customer")
-      .child(this.user)
-      .on("value", snapshot => {
-        var snap = snapshot.val();
-        console.log(snap);
-        (vm.name = snap.name)
-      });
-  },
-  computed: {
-    user() {
-      return this.$store.getters.user;
-    }
-  },
-  methods: {
-    signIn() {
+  import {
+    db,
+    auth,
+    storage
+  } from "@/main";
+  
+  export default {
+    data() {
+      return {
+        e1: true,
+        name: "",
+        email: "",
+        password: "",
+        login: false,
+        drawer: false,
+        items: [{
+            icon: "music_note",
+            text: "Music",
+            url: "./Music"
+          },
+          {
+            icon: "movie",
+            text: "Movies",
+            url: "./Movies"
+          }
+        ]
+      };
+    },
+    updated() {
       var vm = this;
-      if (this.user === null) {
+      db.ref()
+        .child("customer")
+        .child(this.user)
+        .on("value", snapshot => {
+          var snap = snapshot.val();
+          (vm.name = snap.name)
+        });
+    },
+    computed: {
+      user() {
+        return this.$store.getters.user;
+      }
+    },
+    methods: {
+      signIn() {
+        var vm = this;
+        if (this.user === null) {
+          this.$store
+            .dispatch("signIn", {
+              email: this.email,
+              password: this.password
+            })
+            .then(() => {
+              alert("Successfully sign in");
+            })
+            .catch(err => {
+              alert(err);
+            });
+        } else {
+          alert("You already sign in");
+        }
+      },
+      signOut() {
         this.$store
-          .dispatch("signIn", { email: this.email, password: this.password })
+          .dispatch("signOut")
           .then(() => {
-            alert("Successfully sign in");
+            alert("Signed Out");
           })
           .catch(err => {
             alert(err);
           });
-      } else {
-        alert("You already sign in");
       }
-    },
-    signOut() {
-      this.$store
-        .dispatch("signOut")
-        .then(() => {
-          alert("Signed Out");
-        })
-        .catch(err => {
-          alert(err);
-        });
     }
-  }
-};
+  };
 </script>

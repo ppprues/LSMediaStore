@@ -5,26 +5,24 @@
         <v-form-title class="headline">Customer Register</v-form-title>
         <v-text-field label="Name" v-model="name" :rules="[rules.required,rules.Namerequired]" required></v-text-field>
         <v-text-field label="Email" v-model="email" :rules="[rules.required, rules.email]" required></v-text-field>
-        <v-text-field label="Password" hint="At least 8 characters" v-model="password" min="8" :error-messages="passwordErrors" :append-icon="e1 ? 'visibility' : 'visibility_off'"
-          :append-icon-cb="() => (e1 = !e1)" :type="e1 ? 'password' : 'text'" :rules="[rules.required]" required></v-text-field>
-        <v-text-field name="repeatPass" label="Repeat Password" hint="At least 8 characters" v-model="password2" min="8" :error-messages="passwordErrors"
-          :append-icon="e2 ? 'visibility' : 'visibility_off'" :append-icon-cb="() => (e2 = !e2)" :type="e2 ? 'password' : 'text'"
+        <v-text-field label="Password" hint="At least 8 characters" v-model="password" min="8" :error-messages="passwordErrors" :append-icon="e1 ? 'visibility' : 'visibility_off'" :append-icon-cb="() => (e1 = !e1)" :type="e1 ? 'password' : 'text'" :rules="[rules.required]"
+          required></v-text-field>
+        <v-text-field name="repeatPass" label="Repeat Password" hint="At least 8 characters" v-model="password2" min="8" :error-messages="passwordErrors" :append-icon="e2 ? 'visibility' : 'visibility_off'" :append-icon-cb="() => (e2 = !e2)" :type="e2 ? 'password' : 'text'"
           :rules="[rules.required]" required></v-text-field>
         <v-select label="Gender" v-model="gender" :items="genders" required></v-select>
-
+  
         <v-layout row wrap>
           <v-flex xs11 sm5>
-            <v-menu lazy :close-on-content-click="false" v-model="menu" transition="scale-transition" offset-y full-width :nudge-right="40"
-              max-width="290px" min-width="290px">
+            <v-menu lazy :close-on-content-click="false" v-model="menu" transition="scale-transition" offset-y full-width :nudge-right="40" max-width="290px" min-width="290px">
               <v-text-field slot="activator" label="Date in M/D/Y format" v-model="dateFormatted" prepend-icon="event" @blur="date = parseDate(dateFormatted)"></v-text-field>
               <v-date-picker v-model="date" @input="dateFormatted = formatDate($event)" no-title scrollable actions>
                 <template slot-scope="{ save, cancel }">
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn flat color="primary" @click="cancel">Cancel</v-btn>
-                    <v-btn flat color="primary" @click="save">OK</v-btn>
-                  </v-card-actions>
-                </template>
+                                              <v-card-actions>
+                                                <v-spacer></v-spacer>
+                                                <v-btn flat color="primary" @click="cancel">Cancel</v-btn>
+                                                <v-btn flat color="primary" @click="save">OK</v-btn>
+                                              </v-card-actions>
+</template>
               </v-date-picker>
             </v-menu>
             <p>Date in ISO format:
@@ -53,7 +51,7 @@
 
 <script>
   import firebase from "firebase"
-
+  
   export default {
     data() {
       return {
@@ -321,7 +319,10 @@
         console.log(this.user)
         var vm = this
         this.$store
-          .dispatch("signUp", { email: this.email, password: this.password })
+          .dispatch("signUp", {
+            email: this.email,
+            password: this.password
+          })
           .then(() => {
             firebase
               .database()
@@ -342,7 +343,7 @@
         if (!date) {
           return null
         }
-
+  
         const [year, month, day] = date.split("-")
         return `${month}/${day}/${year}`
       },
@@ -350,7 +351,7 @@
         if (!date) {
           return null
         }
-
+  
         const [month, day, year] = date.split("/")
         return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`
       }
