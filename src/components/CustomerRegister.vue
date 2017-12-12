@@ -5,24 +5,26 @@
         <v-form-title class="headline">Customer Register</v-form-title>
         <v-text-field label="Name" v-model="name" :rules="[rules.required,rules.Namerequired]" required></v-text-field>
         <v-text-field label="Email" v-model="email" :rules="[rules.required, rules.email]" required></v-text-field>
-        <v-text-field label="Password" hint="At least 8 characters" v-model="password" min="8" :error-messages="passwordErrors" :append-icon="e1 ? 'visibility' : 'visibility_off'" :append-icon-cb="() => (e1 = !e1)" :type="e1 ? 'password' : 'text'" :rules="[rules.required]"
-          required></v-text-field>
-        <v-text-field name="repeatPass" label="Repeat Password" hint="At least 8 characters" v-model="password2" min="8" :error-messages="passwordErrors" :append-icon="e2 ? 'visibility' : 'visibility_off'" :append-icon-cb="() => (e2 = !e2)" :type="e2 ? 'password' : 'text'"
-          :rules="[rules.required]" required></v-text-field>
+        <v-text-field label="Password"  v-model="password" :rule="[v => v >= 8 || 'At least 8 characters' ]" :error-messages="passwordErrors" :append-icon="e1 ? 'visibility' : 'visibility_off'"
+          :append-icon-cb="() => (e1 = !e1)" :type="e1 ? 'password' : 'text'" :rules="[rules.required]" required></v-text-field>
+        <v-text-field name="repeatPass" label="Repeat Password" v-model="password2" :rule="[v => v >= 8 || 'At least 8 characters' ]" :error-messages="passwordErrors"
+          :append-icon="e2 ? 'visibility' : 'visibility_off'" :append-icon-cb="() => (e2 = !e2)" :type="e2 ? 'password' : 'text'"
+          :rules="[rules.required,rules.passwordCheck]" required></v-text-field>
         <v-select label="Gender" v-model="gender" :items="genders" required></v-select>
-  
+
         <v-layout row wrap>
           <v-flex xs11 sm5>
-            <v-menu lazy :close-on-content-click="false" v-model="menu" transition="scale-transition" offset-y full-width :nudge-right="40" max-width="290px" min-width="290px">
+            <v-menu lazy :close-on-content-click="false" v-model="menu" transition="scale-transition" offset-y full-width :nudge-right="40"
+              max-width="290px" min-width="290px">
               <v-text-field slot="activator" label="Date in M/D/Y format" v-model="dateFormatted" prepend-icon="event" @blur="date = parseDate(dateFormatted)"></v-text-field>
               <v-date-picker v-model="date" @input="dateFormatted = formatDate($event)" no-title scrollable actions>
                 <template slot-scope="{ save, cancel }">
-                                              <v-card-actions>
-                                                <v-spacer></v-spacer>
-                                                <v-btn flat color="primary" @click="cancel">Cancel</v-btn>
-                                                <v-btn flat color="primary" @click="save">OK</v-btn>
-                                              </v-card-actions>
-</template>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn flat color="primary" @click="cancel">Cancel</v-btn>
+                    <v-btn flat color="primary" @click="save">OK</v-btn>
+                  </v-card-actions>
+                </template>
               </v-date-picker>
             </v-menu>
             <p>Date in ISO format:
@@ -34,8 +36,8 @@
         <v-text-field label="Address (Optional)" v-model="address" multi-line></v-text-field>
         <v-select label="Country" v-model="country" :items="countries" required></v-select>
         <v-select label="Bank Name" v-model="bankname" :items="banknames" required></v-select>
-        <v-text-field label="BankId" v-model="bankid" required></v-text-field>
-        <v-text-field label="Telephone No." v-model="telephone" :rules="[rules.required,rules.Telephonerequired]" type="number" required></v-text-field>
+        <v-text-field label="BankId" v-model="bankid" type="number"></v-text-field>
+        <v-text-field label="Telephone No." v-model="telephone" :rules="[rules.required,rules.telephone]" type="number" required></v-text-field>
 
         <v-card-actions>
           <router-link to="Register" @click.native.stop="login = false">
@@ -51,12 +53,14 @@
 
 <script>
   import firebase from "firebase"
-  
+
   export default {
     data() {
       return {
         e1: true,
         e2: true,
+        email: "",
+        name: "",
         password: "",
         password2: "",
         gender: null,
@@ -64,6 +68,7 @@
         dateFormatted: null,
         date: null,
         country: null,
+        bankid: null,
         countries: [
           "Afghanistan",
           "Albania",
@@ -273,6 +278,7 @@
           "Zimbabwe"
         ],
         bankname: null,
+        type: 'customer',
         banknames: [
           "BBL - Bangkok Bank",
           "KBANK - Kasikornbank",
@@ -281,9 +287,10 @@
           "SCB - Siam Commercial Bank"
         ],
         telephone: null,
+        point: 0,
         rules: {
-          telephone: v =>
-            v.length == 10 || "Telephone must be 10 numbers",
+          passwordCheck:(v) => this.password2 == this.password ,
+          telephone: v =>  v.length == 10 || "Telephone must be 10 numbers",
           required: value => !!value || "Required.",
           email: value => {
             const pattern = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -291,15 +298,14 @@
           },
           date: null,
           dateFormatted: null
-        },
-        name: "Register"
+        }
       }
     },
     created() {
       firebase
         .database()
         .ref()
-        .child("customer")
+        .child("account")
         .on("value", snapshot);
     },
     computed: {
@@ -312,28 +318,47 @@
     },
     methods: {
       reset() {
-        this.form = Object.assign({}, this.defaultForm)
-        this.$refs.form.reset()
+        this.name = ''
+       this.email = ''
+       this.dateFormatted = ''
+       this.country = ''
+       this.password = ''
+       this.password2 = ''
+       this.gender = ''
+       this.address = ''
+       this.bankname = ''
+       this.bankid = ''
+       this.telephone = ''
+      console.log('clear')
       },
       submit() {
         console.log(this.user)
         var vm = this
         this.$store
-          .dispatch("signUp", {
-            email: this.email,
-            password: this.password
-          })
+          .dispatch("signUp", { email: this.email, password: this.password })
           .then(() => {
             firebase
               .database()
               .ref()
-              .child("customer")
+              .child("account")
               .child(this.user)
               .set({
                 name: vm.name,
-                date: vm.date
+                email: vm.email,
+                date: vm.date,
+                password: vm.password,
+                gender: vm.gender,
+                country: vm.country,
+                banknames: vm.bankname,
+                banknumber: vm.bankid,
+                telephone: vm.telephone,
+                isCustomer: true,
+                isCompany: false,
+                isAdmin: false,
+                point: vm.point
               });
             alert("Successfully sign up")
+            location.assign('/');
           })
           .catch(err => {
             alert(err)
@@ -343,7 +368,7 @@
         if (!date) {
           return null
         }
-  
+
         const [year, month, day] = date.split("-")
         return `${month}/${day}/${year}`
       },
@@ -351,7 +376,7 @@
         if (!date) {
           return null
         }
-  
+
         const [month, day, year] = date.split("/")
         return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`
       }

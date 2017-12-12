@@ -65,6 +65,7 @@
 </template>
 
 <script>
+import firebase from "firebase"
   export default {
     data: () => {
       return {
@@ -73,6 +74,7 @@
       e2: true,
       email:'',
       password: '',
+      password2: '',
       name: '',
       address: '',
       mobilePhone:'',
@@ -90,23 +92,69 @@
     }
   }
 },
-methods: {
-    submit () {
-      if (this.$refs.form.validate()) {
-        // Native form submission is not yet supported
-        axios.post('/api/submit', {
-          email: this.email,
-          password: this.password,
-          name: this.name,
-          address: this.address,
-          mobilePhone: this.mobilePhone
-        })
-      }
-    },
-    clear () {
-      this.$refs.form.reset()
-    }
+created() {
+  firebase
+    .database()
+    .ref()
+    .child("admin")
+    .on("value", snapshot);
+},
+computed: {
+  formIsValid() {
+    return this.form
   },
-  name: 'Admin'
+  user() {
+    return this.$store.getters.user
+  }
+},
+methods: {
+  clear() {
+    this.form = Object.assign({}, this.defaultForm)
+    this.$refs.form.reset()
+  },
+  submit() {
+    console.log(this.user)
+    var vm = this
+    this.$store
+      .dispatch("signUp", { email: this.email, password: this.password })
+      .then(() => {
+        firebase
+          .database()
+          .ref()
+          .child("account")
+          .child(this.user)
+          .set({
+            name: vm.name,
+            email: vm.email,
+            password: vm.password,
+            address: vm.address,
+            mobilePhone: vm.mobilePhone,
+            isAdmin: true,
+            isCustomer: false,
+            isCompany: false
+          });
+        alert("Successfully admin sign up")
+      })
+      .catch(err => {
+        alert(err)
+      })
+  },
+  formatDate(date) {
+    if (!date) {
+      return null
+    }
+
+    const [year, month, day] = date.split("-")
+    return `${month}/${day}/${year}`
+  },
+  parseDate(date) {
+    if (!date) {
+      return null
+    }
+
+    const [month, day, year] = date.split("/")
+    return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`
+  }
+}
 }
 </script>

@@ -2,7 +2,7 @@
   <v-app id="inspire">
     <v-navigation-drawer fixed clipped app v-model="drawer">
       <v-list dense>
-        <template v-for="(item, url, i) in items">
+        <template v-for="(item, i) in items">
           <v-list-tile v-bind:href="item.url">
             <v-list-tile-action>
               <v-icon>{{ item.icon }}</v-icon>
@@ -20,13 +20,16 @@
       <v-toolbar-title :style="$vuetify.breakpoint.smAndUp ? 'width: 300px; min-width: 250px' : 'min-width: 72px'" class="ml-0 pl-3">
         <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
         <v-avatar size="32px" tile>
-          <router-link to="/" style="height: 32px">
+          <router-link to="/">
             <img src="./assets/LS-logo-full.png" alt="LS Media Store" style="width: auto; height: 32px; padding-left: 120px;">
           </router-link>
         </v-avatar>
       </v-toolbar-title>
       <v-text-field light solo prepend-icon="search" placeholder="Search"></v-text-field>
       <div class="d-flex align-center" style="margin-left: auto">
+        <v-btn icon @click.native.stop="cart = true">
+          <v-icon>shopping_cart</v-icon>
+        </v-btn>
         <v-btn icon @click.native.stop="login = true">
           <v-icon>account_circle</v-icon>
         </v-btn>
@@ -64,7 +67,23 @@
               </v-form>
             </v-card-text>
           </v-card>
-
+        </v-dialog>
+        <v-dialog v-model="cart" max-width="290">
+          <v-card v-if="user !== null">
+            <v-card-title class="headline">Cart</v-card-title>
+            <v-card-text>
+              <v-form>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn flat @click="checkout" style="color: RED">Check out</v-btn>
+                </v-card-actions>
+              </v-form>
+            </v-card-text>
+          </v-card>
+          <v-card v-else>
+            <v-card-title class="headline">Cart</v-card-title>
+            <v-card-text>Need to login first</v-card-text>
+          </v-card>
         </v-dialog>
       </div>
     </v-toolbar>
@@ -80,9 +99,8 @@
   import {
     db,
     auth,
-    storage
-  } from "@/main";
-  
+    storage,
+  } from "./main";
   export default {
     data() {
       return {
@@ -90,6 +108,7 @@
         name: "",
         email: "",
         password: "",
+        cart: false,
         login: false,
         drawer: false,
         items: [{
@@ -108,12 +127,13 @@
     updated() {
       var vm = this;
       db.ref()
-        .child("customer")
+        .child("account")
         .child(this.user)
         .on("value", snapshot => {
           var snap = snapshot.val();
+          console.log(snap);
           (vm.name = snap.name)
-        });
+        })
     },
     computed: {
       user() {

@@ -4,9 +4,13 @@
       <v-form v-model="valid">
         <v-form-title class="headline">Add Album</v-form-title>
         <v-text-field label="Title" v-model="title" :rules="[rules.required]" required></v-text-field>
-        <v-text-field label="Price" v-model="price" :rules="[v => v > 0 && !!v || 'Price is required']" prefix="฿" type="number" required></v-text-field>
+        <v-text-field label="CoverURL" v-model="cover" ></v-text-field>
+        <v-text-field label="Price" v-model="price" :rules="[rules.required]" type = "number"required></v-text-field>
+        <v-text-field label="Description" v-model="description" :rules="[rules.required]" required></v-text-field>
+
         <v-card-actions>
-          <v-btn flat @click="reset">Reset</v-btn>
+          
+            <v-btn @click="clear">clear</v-btn>
           <v-spacer></v-spacer>
           <v-btn flat @click="submit">Register</v-btn>
         </v-card-actions>
@@ -16,45 +20,74 @@
 </template>
 
 <script>
-  import firebase from "firebase";
+import { db } from '@/main'
+
   export default {
-    data() {
+    data () {
       return {
         title: null,
         price: null,
+       description: null,
+       cover:null,
         rules: {
-          required: value => !!value || "Required."
+        required: (value) => !!value || 'Required.',
         }
-      };
+      }
     },
-  
     methods: {
-      reset() {
-        this.title = "";
-        this.price = null;
-      },
       submit() {
-        console.log(this.user);
-        var vm = this;
+        var vm = this
+        var userObj
+        var userState = this.$store.state.user
+  
+        console.log('submits')
+        console.log(userState)
+  
         this.$store
-          .dispatch("signUp", {
-            email: this.email,
-            password: this.password
+          .dispatch("autoSign", userState)
+  
+        console.log(userState)
+        console.log(userState.uid)
+        console.log('a')
+  
+        console.log('b')
+  
+        db.ref()
+          .child("account")
+          .child(userState.uid)
+          .on("value", snapshot => {
+            var userObj = snapshot.val()
+            console.log('inside')
+            console.log(userObj)
+  
+            if (userObj.isCompany) {
+              db.ref()
+                .child('album')
+                .push({
+                  title: vm.title,
+                  price: vm.price,
+                  description: vm.description,
+                  cover: vm.cover,
+                  companyname: userState.uid
+                });
+  
+              console.log('c')
+  
+              alert('Success!!!!');
+              location.assign('/Company');
+            } else {
+              alert('Error, need to be in company');
+            }
+          }).catch(err => {
+            alert(err)
           })
-          .then(() => {
-            firebase
-              .database()
-              .ref()
-              .child("company")
-              .child(this.user)
-              .set({
-              });
-            alert("Successfully sign up");
-          })
-          .catch(err => {
-            alert(err);
-          });
+      },
+      clear() {
+        this.title = ''
+        this.price = '' // Clear select Genre1
+        this.description = '' // Clear select Genre2
+        console.log('clear')
       }
     }
-  };
+  }
 </script>
