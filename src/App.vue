@@ -3,17 +3,17 @@
     <v-navigation-drawer fixed clipped app v-model="drawer">
       <v-list dense>
         <template v-for="(item, i) in items">
-          <v-list-tile v-bind:href="item.url">
-            <v-list-tile-action>
-              <v-icon>{{ item.icon }}</v-icon>
-            </v-list-tile-action>
-            <v-list-tile-content>
-              <v-list-tile-title>
-                {{ item.text }}
-              </v-list-tile-title>
-            </v-list-tile-content>
-          </v-list-tile>
-        </template>
+            <v-list-tile v-bind:href="item.url">
+              <v-list-tile-action>
+                <v-icon>{{ item.icon }}</v-icon>
+              </v-list-tile-action>
+              <v-list-tile-content>
+                <v-list-tile-title>
+                  {{ item.text }}
+                </v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+</template>
       </v-list>
     </v-navigation-drawer>
     <v-toolbar color="deep-orange" dark app clipped-left fixed>
@@ -39,7 +39,9 @@
             <v-card-text>
               <v-form>
                 <v-text>
-                  {{name}}
+                  Name: {{name}}
+                  <br>
+                  Type: {{type}}
                 </v-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
@@ -52,9 +54,9 @@
             <v-card-title class="headline">Login</v-card-title>
             <v-card-text>
               <v-form>
-                <v-text-field label="Email" v-model="email" :error-messages="emailErrors" @input="$v.email.$touch()" @blur="$v.email.$touch()"
+                <v-text-field label="Email" v-model="email" @input="$v.email.$touch()" @blur="$v.email.$touch()"
                   required></v-text-field>
-                <v-text-field label="Password" hint="At least 8 characters" v-model="password" min="8" :error-messages="passwordErrors" :append-icon="e1 ? 'visibility' : 'visibility_off'"
+                <v-text-field label="Password" hint="At least 8 characters" v-model="password" min="8" :append-icon="e1 ? 'visibility' : 'visibility_off'"
                   :append-icon-cb="() => (e1 = !e1)" :type="e1 ? 'password' : 'text'" counter @input="$v.password.$touch()"
                   @blur="$v.password.$touch()" required></v-text-field>
                 <v-card-actions>
@@ -106,6 +108,7 @@
       return {
         e1: true,
         name: "",
+        type: "",
         email: "",
         password: "",
         cart: false,
@@ -126,13 +129,21 @@
     },
     updated() {
       var vm = this;
+  
       db.ref()
         .child("account")
-        .child(this.user)
+        .child(this.user.uid)
         .on("value", snapshot => {
           var snap = snapshot.val();
           console.log(snap);
           (vm.name = snap.name)
+          if (snap.isAdmin) {
+            vm.type = "Admin"
+          } else if (snap.isCompany) {
+            vm.type = "Company"
+          } else {
+            vm.type = "Customer"
+          }
         })
     },
     computed: {
@@ -143,6 +154,7 @@
     methods: {
       signIn() {
         var vm = this;
+  
         if (this.user === null) {
           this.$store
             .dispatch("signIn", {
@@ -160,6 +172,7 @@
         }
       },
       signOut() {
+        this.name = '';
         this.$store
           .dispatch("signOut")
           .then(() => {

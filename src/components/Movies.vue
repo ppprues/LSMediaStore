@@ -30,7 +30,8 @@
           </v-card-title>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn flat color="orange">Add to Cart</v-btn>
+            <v-btn flat color="orange" @click="addtoCart('movie', item.key)">
+              <v-icon>add_shopping_cart</v-icon></v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -61,12 +62,41 @@
         .child("movie")
         .on("value", snapshot => {
           var snap = snapshot.val();
-          this.allmovie = snap;
+          let itemArray = []
+          Object.keys(snap).forEach(k => {
+            snap[k].key = k
+            itemArray.push(snap[k])
+          })
+          this.allmovie = itemArray
         });
     },
     computed: {
       user() {
         return this.$store.getters.user
+      }
+    },
+    methods: {
+      addtoCart(type, uid) {
+        console.log(this.user.uid)
+        console.log(type, uid)
+        var vm = this
+        var userObj
+        var userState = this.$store.state.user
+  
+        this.$store
+          .dispatch("autoSign", userState)
+          .then(() => {
+            db.ref()
+              .child("cart")
+              .child(userState.uid)
+              .child(type)
+              .update({
+                [uid]: "true"
+              })
+          })
+          .catch(err => {
+            alert(err)
+          })
       }
     }
   }

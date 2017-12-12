@@ -16,47 +16,65 @@
           </v-card-title>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn flat color="orange" @click=""><v-icon>add_shopping_cart</v-icon></v-btn>
+            <v-btn flat color="orange" @click="addtoCart('album', item.key)">
+              <v-icon>add_shopping_cart</v-icon>
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
-      <v-data-table v-bind:headers="headers" :items="items" hide-actions class="elevation-1">
+      <v-data-table v-bind:headers="headers" :items="allmusic" hide-actions class="elevation-1">
         <template slot="items" slot-scope="props">
-          <td>{{ props.item.title }}</td>
-          <td class="text-xs-right">{{ props.item.artist }}</td>
-          <td class="text-xs-right">{{ props.item.duration }}</td>
-          <td class="text-xs-right">{{ props.item.genre }}</td>
-          <td class="text-xs-right">{{ props.item.price }}</td>
-          <td class="text-xs-right">{{ props.item.year }}</td>
-          <v-btn flat color="orange" @click=""><v-icon>add_shopping_cart</v-icon></v-btn>
-        </template>
+                      <td>{{ props.item.title }}</td>
+                      <td class="text-xs-right">{{ props.item.artist }}</td>
+                      <td class="text-xs-right">{{ props.item.duration }}</td>
+                      <td class="text-xs-right">{{ props.item.genre }}</td>
+                      <td class="text-xs-right">{{ props.item.price }}</td>
+                      <td class="text-xs-right">{{ props.item.year }}</td>
+                      <v-btn flat color="orange" @click="addtoCart('music', props.item.key)"><v-icon>add_shopping_cart</v-icon></v-btn>
+</template>
       </v-data-table>
     </v-layout>
   </v-container>
 </template>
 
 <script>
-  import { db } from '@/main'
+  import {
+    db
+  } from '@/main'
   export default {
     data() {
       return {
         allmusic: '',
         allalbum: '',
-        headers: [
-          {
+        headers: [{
             text: 'Music',
             align: 'left',
             sortable: true,
             value: 'title'
           },
-          { text: 'Artist', value: 'artist' },
-          { text: 'Duration', value:'duration' },
-          { text: 'Genre', value: 'genre' },
-          { text: 'Price', value: 'price' },
-          { text: 'Year', value: 'year' }
+          {
+            text: 'Artist',
+            value: 'artist'
+          },
+          {
+            text: 'Duration',
+            value: 'duration'
+          },
+          {
+            text: 'Genre',
+            value: 'genre'
+          },
+          {
+            text: 'Price',
+            value: 'price'
+          },
+          {
+            text: 'Year',
+            value: 'year'
+          }
         ],
-         items: '',
-          banner: ['static/coldplay.png','static/linkinpark.jpg','static/maroon5.jpg','static/taylor.jpg']
+        items: '',
+        banner: ['static/coldplay.png', 'static/linkinpark.jpg', 'static/maroon5.jpg', 'static/taylor.jpg']
       }
     },
     mounted() {
@@ -70,7 +88,7 @@
             snap[k].key = k
             itemArray.push(snap[k])
           })
-          vm.items = itemArray
+          vm.allmusic = itemArray
         });
     },
     created() {
@@ -83,7 +101,7 @@
             snap[k].key = k
             itemArray.push(snap[k])
           })
-          vm.items = itemArray          
+          this.allalbum = itemArray
         });
     },
     computed: {
@@ -92,7 +110,27 @@
       }
     },
     methods: {
-      addtoCart(uid) {
+      addtoCart(type, uid) {
+        console.log(this.user.uid)
+        console.log(type, uid)
+        var vm = this
+        var userObj
+        var userState = this.$store.state.user
+  
+        this.$store
+          .dispatch("autoSign", userState)
+          .then(() => {
+            db.ref()
+              .child("cart")
+              .child(userState.uid)
+              .child(type)
+              .update({
+                [uid]: "true"
+              })
+          })
+          .catch(err => {
+            alert(err)
+          })
       }
     }
   }

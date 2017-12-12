@@ -85,11 +85,6 @@ export default new Router({
       component: AdminMusic
     },
     {
-      path: '/Music',
-      name: 'Music',
-      component: Music
-    },
-    {
       path: '/Admin/Movies',
       name: 'AdminMovie',
       component: AdminMovie

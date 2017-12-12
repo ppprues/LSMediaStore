@@ -110,7 +110,5 @@ import firebase from "firebase"
           })
         }
       }
-      
     }
-    
 </script>
