@@ -17,7 +17,9 @@ export const store = new Vuex.Store({
   actions: {
     signUp ({ commit }, payload) {
       return new Promise((resolve, reject) => {
-        auth.createUserWithEmailAndPassword(payload.email, payload.password).then(
+        var email = payload.email;
+        var password = payload.password;
+        auth.createUserWithEmailAndPassword(email,password).then(
           user => {
             const uid = user.uid
             commit('setUser', uid)

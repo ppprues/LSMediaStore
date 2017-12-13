@@ -354,8 +354,7 @@
                 telephone: vm.telephone,
                 isCustomer: true,
                 isCompany: false,
-                isAdmin: false,
-                point: vm.point
+                isAdmin: false
               });
             alert("Successfully sign up")
             location.assign('/');

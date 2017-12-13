@@ -2,18 +2,59 @@
   <v-app id="inspire">
     <v-navigation-drawer fixed clipped app v-model="drawer">
       <v-list dense>
-        <template v-for="(item, i) in items">
-            <v-list-tile v-bind:href="item.url">
-              <v-list-tile-action>
-                <v-icon>{{ item.icon }}</v-icon>
-              </v-list-tile-action>
-              <v-list-tile-content>
-                <v-list-tile-title>
-                  {{ item.text }}
-                </v-list-tile-title>
-              </v-list-tile-content>
-            </v-list-tile>
-</template>
+        <v-flex xs6>
+          <v-subheader>Customer</v-subheader>
+        </v-flex>
+        <template v-for="(item, i) in customer">
+          <v-list-tile v-bind:href="item.url">
+            <v-list-tile-action>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-content>
+              <v-list-tile-title>
+                {{ item.text }}
+              </v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+        </template>
+        <v-divider
+          dark
+          class="my-4"
+        ></v-divider>
+        <v-flex xs6>
+          <v-subheader>Company</v-subheader>
+        </v-flex>
+        <template v-for="(item, i) in company">
+          <v-list-tile v-bind:href="item.url">
+            <v-list-tile-action>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-content>
+              <v-list-tile-title>
+                {{ item.text }}
+              </v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+        </template>
+        <v-divider
+          dark
+          class="my-4"
+        ></v-divider>
+        <v-flex xs6>
+          <v-subheader>Admin</v-subheader>
+        </v-flex>
+        <template v-for="(item, i) in admin">
+          <v-list-tile v-bind:href="item.url">
+            <v-list-tile-action>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-content>
+              <v-list-tile-title>
+                {{ item.text }}
+              </v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+        </template>
       </v-list>
     </v-navigation-drawer>
     <v-toolbar color="deep-orange" dark app clipped-left fixed>
@@ -114,15 +155,37 @@
         cart: false,
         login: false,
         drawer: false,
-        items: [{
+        customer: [{
             icon: "music_note",
             text: "Music",
-            url: "./Music"
+            url: "/Music"
           },
           {
             icon: "movie",
             text: "Movies",
-            url: "./Movies"
+            url: "/Movies"
+          }
+        ],
+        company: [{
+            icon: "music_note",
+            text: "Music",
+            url: "/Company/Music"
+          },
+          {
+            icon: "movie",
+            text: "Movies",
+            url: "/Company/Movies"
+          }
+        ],
+        admin: [{
+            icon: "music_note",
+            text: "Music",
+            url: "/Admin/Music"
+          },
+          {
+            icon: "movie",
+            text: "Movies",
+            url: "/Admin/Movies"
           }
         ]
       };

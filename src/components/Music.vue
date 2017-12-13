@@ -17,7 +17,7 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn flat color="orange" @click="addtoCart('album', item.key)">
-              <v-icon>add_shopping_cart</v-icon>
+              <v-icon>add_library</v-icon>
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -30,7 +30,7 @@
                       <td class="text-xs-right">{{ props.item.genre }}</td>
                       <td class="text-xs-right">{{ props.item.price }}</td>
                       <td class="text-xs-right">{{ props.item.year }}</td>
-                      <v-btn flat color="orange" @click="addtoCart('music', props.item.key)"><v-icon>add_shopping_cart</v-icon></v-btn>
+                      <v-btn flat color="orange" @click="addtoCart('music', props.item.key)"><v-icon>add_library</v-icon></v-btn>
 </template>
       </v-data-table>
     </v-layout>

@@ -1,12 +1,12 @@
 <template>
   <v-data-table v-bind:headers="headers" :items="items" hide-actions class="elevation-1">
     <template slot="items" slot-scope="props">
-                    <td>{{ props.item.title }}</td>
-                    <td class="text-xs-right">{{ props.item.artist }}</td>
-                    <td class="text-xs-right">{{ props.item.genre }}</td>
-                    <td class="text-xs-right">{{ props.item.duration }}</td>
-                    <td class="text-xs-right">{{ props.item.price }}</td>
-                    <td class="text-xs-right">{{ props.item.year }}</td>
+                          <td>{{ props.item.title }}</td>
+                          <td class="text-xs-right">{{ props.item.artist }}</td>
+                          <td class="text-xs-right">{{ props.item.genre }}</td>
+                          <td class="text-xs-right">{{ props.item.duration }}</td>
+                          <td class="text-xs-right">{{ props.item.price }}</td>
+                          <td class="text-xs-right">{{ props.item.year }}</td>
 </template>
   </v-data-table>
 </template>
@@ -50,7 +50,6 @@
       }
     },
     created() {
-      console.log("aaaaaaaaaaaaaa")
       var vm = this
       db.ref()
         .child("music")
@@ -61,6 +60,11 @@
             snap[k].key = k
             itemArray.push(snap[k])
           })
+          for (var i = itemArray.length - 1; i >= 0; i--) {
+            if (array[i].companyname === this.user.id) {
+              array.splice(i, 1);
+            }
+          }
           vm.items = itemArray
         });
     },
@@ -71,67 +75,10 @@
   
       this.$store
         .dispatch("autoSign", userState)
-      console.log("adadadadada")
-      console.log(vm.user.uid)
-      // db.ref()
-      //   .child("account")
-      //   .child(userState.uid)
-      //   .on("value", snapshot => {
-      //     var userObj = snapshot.val()
-      //     console.log('inside')
-      //     console.log(userObj)
-  
-      //     if (userObj.isCompany) {
-      //       db.ref()
-      //         .child('music')
-      //         .child(key)
-      //         .remove()
-  
-      //       console.log('c')
-  
-      //     } else {
-      //       alert('Error, need to be in admin');
-      //     }
-      //   }).catch(err => {
-      //     alert(err)
-      //   })
     },
     computed: {
       user() {
         return this.$store.getters.user
-      }
-    },
-    methods: {
-      remove(key) {
-        var vm = this
-        var userObj
-        var userState = this.$store.state.user
-  
-        this.$store
-          .dispatch("autoSign", userState)
-  
-        db.ref()
-          .child("account")
-          .child(userState.uid)
-          .on("value", snapshot => {
-            var userObj = snapshot.val()
-            console.log('inside')
-            console.log(userObj)
-  
-            if (userObj.isAdmin) {
-              db.ref()
-                .child('music')
-                .child(key)
-                .remove()
-  
-              console.log('c')
-  
-            } else {
-              alert('Error, need to be in admin');
-            }
-          }).catch(err => {
-            alert(err)
-          })
       }
     }
   }

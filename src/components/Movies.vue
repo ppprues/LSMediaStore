@@ -31,7 +31,7 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn flat color="orange" @click="addtoCart('movie', item.key)">
-              <v-icon>add_shopping_cart</v-icon></v-btn>
+              <v-icon>add_library</v-icon></v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -59,7 +59,7 @@
     
     created() {
       db.ref()
-        .child("movie")
+        .child("library")
         .on("value", snapshot => {
           var snap = snapshot.val();
           let itemArray = []

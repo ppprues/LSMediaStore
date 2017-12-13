@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import Welcome from '@/components/Welcome.vue'
 import Movies from '@/components/Movies.vue'
 import Music from '@/components/Music.vue'
-import CustomerRegister from '@/components/CustomerRegister.vue'
+import Register from '@/components/Register.vue'
 import AddAlbum from '@/components/AddAlbum.vue'
 import AddMovie from '@/components/AddMovie.vue'
 import AddMusic from '@/components/AddMusic.vue'
@@ -13,6 +13,7 @@ import AdminMusic from '@/components/AdminMusic.vue'
 import AdminMovie from '@/components/AdminMovie.vue'
 import AdminAlbum from '@/components/AdminAlbum.vue'
 import CompanyMusic from '@/components/CompanyMusic.vue'
+import CompanyMovie from '@/components/CompanyMovie.vue'
 
 Vue.use(Router)
 
@@ -36,8 +37,8 @@ export default new Router({
     },
     {
       path: '/Register',
-      name: 'CustomerRegister',
-      component: CustomerRegister
+      name: 'Register',
+      component: Register
     },
     {
       path: '/Company',
@@ -93,6 +94,11 @@ export default new Router({
       path: '/Admin/Album',
       name: 'AdminAlbum',
       component: AdminAlbum
+    },
+    {
+      path: '/Company/Movie',
+      name: 'CompanyMovie',
+      component: CompanyMovie
     }
   ]
 })

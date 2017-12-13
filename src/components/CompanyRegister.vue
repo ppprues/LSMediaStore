@@ -4,10 +4,10 @@
       <v-form v-model="valid">
         <v-form-title class="headline">Company Register</v-form-title>
         <v-text-field label="Email" v-model="email" :rules="[rules.required, rules.email]" required></v-text-field>
-        <v-text-field label="Password" v-model="password":rule="[v => v >= 8 || 'At least 8 characters' ]" :error-messages="passwordErrors"
+        <v-text-field label="Password" v-model="password":rule="[v => v >= 8 || 'At least 8 characters' ]"
           :append-icon="e1 ? 'visibility' : 'visibility_off'" :append-icon-cb="() => (e1 = !e1)" :type="e1 ? 'password' : 'text'"
           :rules="[rules.required]" required></v-text-field>
-        <v-text-field name="repeatPass" label="Repeat Password"  v-model="password2" :rule="[v => v >= 8 || 'At least 8 characters' ]" :error-messages="passwordErrors"
+        <v-text-field name="repeatPass" label="Repeat Password"  v-model="password2" :rule="[v => v >= 8 || 'At least 8 characters' ]"
           :append-icon="e2 ? 'visibility' : 'visibility_off'" :append-icon-cb="() => (e2 = !e2)" :type="e2 ? 'password' : 'text'"
           :rules="[rules.required,rules.passwordCheck]" required></v-text-field>
         <v-text-field label="Name" v-model="name" :rules="[rules.required]" required></v-text-field>
@@ -53,13 +53,6 @@ import firebase from "firebase"
         }
       }
     },
-    created() {
-      firebase
-        .database()
-        .ref()
-        .child("account")
-        .on("value", snapshot);
-    },
     computed: {
       formIsValid () {
         return this.form
@@ -81,14 +74,13 @@ import firebase from "firebase"
       console.log('clear')
       },
       submit () {
-        console.log(this.user)
         var vm = this
         this.$store
           .dispatch("signUp", { email: this.email, password: this.password })
           .then(() => {
             firebase.database().ref()
               .child("account")
-              .child(this.user)
+              .child(this.user.uid)
               .set({
                 email: vm.email,
                 password: vm.password,
